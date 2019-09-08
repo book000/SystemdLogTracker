@@ -103,6 +103,16 @@ journalctlの引数を指定してください。
 `-a`または`--all`を指定することをお勧めします。これは出力が非常に長い場合でもすべてを表示します。  
 引数`-u`または`--unit=UNIT|PATTERN`はとても有用です。これにより、systemdサービス(Unit)を指定できます。
 
+### sendInterval
+
+必須では**ありません**。
+
+出力を処理するインターバルミリ秒を指定してください。  
+例: `1000`  
+デフォルト値: `5000`
+
+`long`値として解析できない場合は、デフォルト値が使用されます。
+
 ## Systemdに登録する
 
 1. `/etc/systemd/system/`の下にサービスファイルを作成します。例: `/etc/systemd/system/SystemdLogTracker.service`
