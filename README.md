@@ -103,6 +103,16 @@ Please be sure to specified the `-f` or `--follow` argument. If not specified, m
 It is recommended to specify `-a` or `--all`. This shows everything even when output is very long.  
 The argument `-u` or `--unit=UNIT|PATTERN` is very useful. This can specify a systemd service (unit).
 
+### sendInterval
+
+**Not** required.
+
+Please specify the interval milliseconds for processing the output.  
+For example: `1000`  
+Default value: `5000`
+
+If it cannot be parsed as a `long` value, it is the default value is used.
+
 ## Register with Systemd
 
 1. Create a service file under `/etc/systemd/system/`. For example: `/etc/systemd/system/SystemdLogTracker.service`

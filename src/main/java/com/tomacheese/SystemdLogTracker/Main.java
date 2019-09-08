@@ -44,6 +44,7 @@ public class Main {
 			props.setProperty("webhookAvatarUrl", "-----");
 			props.setProperty("webhookBotName", "SystemdLogTracker");
 			props.setProperty("arguments", "-a -o cat -f -n 0");
+			props.setProperty("sendInterval", "5000");
 			try {
 				props.store(new FileOutputStream(f), null);
 			} catch (IOException e) {
@@ -135,7 +136,15 @@ public class Main {
 		System.out.println("Run command: " + String.join(" ", command));
 		new Tracker(command).start();
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new Sender(), 0, 1000);
+		long sendInterval = 5000;
+		try {
+			if (props.containsKey("sendInterval")) {
+				sendInterval = Long.valueOf(props.getProperty("sendInterval"));
+			}
+		} catch (NumberFormatException e) {
+			sendInterval = 5000;
+		}
+		timer.scheduleAtFixedRate(new Sender(), 0, sendInterval);
 	}
 
 	public static JDA getJda() {

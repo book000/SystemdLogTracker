@@ -26,12 +26,21 @@ public class Tracker extends Thread {
 			InputStreamReader reader = new InputStreamReader(is);
 			BufferedReader buff = new BufferedReader(reader);
 
-			String line;
-			while ((line = buff.readLine()) != null) {
+			while (true) {
+				if (!p.isAlive()) {
+					break;
+				}
+				if (!buff.ready()) {
+					continue;
+				}
+				String line = buff.readLine();
+				if (line == null) {
+					continue;
+				}
+				System.out.println(line);
 				Main.queue.add(line);
 			}
 			new Sender().run();
-			p.waitFor();
 			int exitCode = p.exitValue();
 			System.out.println("Tracker exited. ExitCode: " + exitCode);
 			System.exit(1);

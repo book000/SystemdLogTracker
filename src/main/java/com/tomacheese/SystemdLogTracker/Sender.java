@@ -32,6 +32,9 @@ public class Sender extends TimerTask {
 				}
 				messages.add(line);
 			}
+			if (messages.size() > 0) {
+				Main.SendMessage("```" + String.join("\n", messages) + "```");
+			}
 		}
 	}
 }
