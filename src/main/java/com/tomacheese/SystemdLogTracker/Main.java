@@ -24,6 +24,7 @@ import net.dv8tion.jda.webhook.WebhookMessageBuilder;
 public class Main {
 	private static JDA jda = null;
 	private static String webhookUrl = null;
+	private static String webhookAvatarUrl = null;
 	private static String webhookBotName = "SystemdLogTracker";
 	private static TextChannel channel = null;
 	public static Queue<String> queue = new ArrayDeque<>();
@@ -40,6 +41,7 @@ public class Main {
 			props.setProperty("discordToken", "-----");
 			props.setProperty("channelId", "-----");
 			props.setProperty("webhookUrl", "-----");
+			props.setProperty("webhookAvatarUrl", "-----");
 			props.setProperty("webhookBotName", "SystemdLogTracker");
 			props.setProperty("arguments", "-a -o cat -f -n 0");
 			try {
@@ -116,6 +118,8 @@ public class Main {
 			System.out.println("Mode: Webhook");
 			webhookUrl = props.getProperty("webhookUrl");
 			webhookBotName = props.getProperty("webhookBotName");
+			if (props.containsKey("webhookAvatarUrl") && !props.getProperty("webhookAvatarUrl").equals("-----"))
+				webhookAvatarUrl = props.getProperty("webhookAvatarUrl");
 		} else {
 			System.out.println("An error occurred.");
 			System.out.println("discordToken or webhookBotName is not defined in the config file.");
@@ -160,10 +164,14 @@ public class Main {
 			});
 		} else if (webhookUrl != null) {
 			WebhookClient client = new WebhookClientBuilder(webhookUrl).build();
-			WebhookMessage message = new WebhookMessageBuilder()
+			WebhookMessageBuilder builder = new WebhookMessageBuilder()
 					.setUsername(webhookBotName)
-					.setContent(text)
-					.build();
+					.setContent(text);
+			if (webhookAvatarUrl != null) {
+				builder.setAvatarUrl(webhookAvatarUrl);
+			}
+
+			WebhookMessage message = builder.build();
 			client.send(message).exceptionally(v -> {
 				System.out.println("Failed to send message: " + text + " (" + v.getMessage() + ")");
 				return null;
