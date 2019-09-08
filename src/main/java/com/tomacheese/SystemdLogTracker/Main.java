@@ -67,8 +67,8 @@ public class Main {
 			System.exit(1);
 			return;
 		}
-		if (props.containsKey("discordToken")) {
-			if (!props.containsKey("channelId")) {
+		if (props.containsKey("discordToken") && !props.getProperty("discordToken").equals("-----")) {
+			if (!props.containsKey("channelId") || props.getProperty("channelId").equals("-----")) {
 				System.out.println("An error occurred.");
 				System.out.println("channelId is not defined in the config file.");
 				System.exit(1);
@@ -108,8 +108,8 @@ public class Main {
 				System.exit(1);
 				return;
 			}
-		} else if (props.containsKey("webhookUrl")) {
-			if (!props.containsKey("webhookBotName")) {
+		} else if (props.containsKey("webhookUrl") && !props.getProperty("webhookUrl").equals("-----")) {
+			if (!props.containsKey("webhookBotName") || props.getProperty("webhookBotName").equals("-----")) {
 				System.out.println("An error occurred.");
 				System.out.println("channelId is not defined in the config file.");
 				System.exit(1);
