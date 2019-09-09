@@ -26,15 +26,14 @@ public class Tracker extends Thread {
 			InputStreamReader reader = new InputStreamReader(is);
 			BufferedReader buff = new BufferedReader(reader);
 
-			while (true) {
-				if (!p.isAlive()) {
-					break;
-				}
+			while (p.isAlive()) {
 				if (!buff.ready()) {
+					Thread.sleep(2000);
 					continue;
 				}
 				String line = buff.readLine();
 				if (line == null) {
+					Thread.sleep(2000);
 					continue;
 				}
 				System.out.println(line);
