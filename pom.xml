@@ -50,20 +50,25 @@
 	<repositories>
 		<repository>
 			<id>jcenter</id>
-			<url>http://jcenter.bintray.com</url>
+			<url>https://jcenter.bintray.com</url>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>3.8.3_463</version>
+			<version>4.2.0_180</version>
 			<exclusions>
 				<exclusion>
 					<groupId>club.minnced</groupId>
 					<artifactId>opus-java</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>club.minnced</groupId>
+			<artifactId>discord-webhooks</artifactId>
+			<version>0.3.1</version>
 		</dependency>
 	</dependencies>
 </project>

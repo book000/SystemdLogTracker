@@ -12,14 +12,13 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.webhook.WebhookClient;
-import net.dv8tion.jda.webhook.WebhookClientBuilder;
-import net.dv8tion.jda.webhook.WebhookMessage;
-import net.dv8tion.jda.webhook.WebhookMessageBuilder;
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.WebhookClientBuilder;
+import club.minnced.discord.webhook.send.WebhookMessage;
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class Main {
 	private static JDA jda = null;
@@ -76,11 +75,9 @@ public class Main {
 				return;
 			}
 			try {
-				jda = new JDABuilder(AccountType.BOT)
-						.setAudioEnabled(false)
+				jda = JDABuilder.createDefault(props.getProperty("discordToken").trim())
 						.setAutoReconnect(true)
 						.setBulkDeleteSplittingEnabled(false)
-						.setToken(props.getProperty("discordToken").trim())
 						.setContextEnabled(false)
 						.build().awaitReady();
 			} catch (Exception e) {
