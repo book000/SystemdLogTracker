@@ -1,4 +1,4 @@
-package com.tomacheese.SystemdLogTracker;
+package com.tomacheese.systemdlogtracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;

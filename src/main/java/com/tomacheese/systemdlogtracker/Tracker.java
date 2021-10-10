@@ -1,4 +1,4 @@
-package com.tomacheese.SystemdLogTracker;
+package com.tomacheese.systemdlogtracker;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 public class Tracker extends Thread {
-	List<String> command;
+    final List<String> command;
 
 	public Tracker(List<String> command) {
 		this.command = command;
