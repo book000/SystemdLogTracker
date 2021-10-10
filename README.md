@@ -2,7 +2,7 @@
 
 [日本語の README はこちらから](https://github.com/book000/SystemdLogTracker/blob/master/README-ja.md)
 
-Tracking systemd log (journal) and send them to discord.
+Tracking systemd log (journal) and send them to discord or slack.
 
 ## Feature
 
