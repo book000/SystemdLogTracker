@@ -16,6 +16,7 @@ public class Tracker extends Thread {
 	public void run() {
 		Process p = null;
 		try {
+            System.out.println(command);
 			ProcessBuilder pb = new ProcessBuilder(command);
 			pb.redirectErrorStream(true);
 
@@ -28,23 +29,19 @@ public class Tracker extends Thread {
 
 			while (p.isAlive()) {
 				if (!buff.ready()) {
-					Thread.sleep(2000);
 					continue;
 				}
 				String line = buff.readLine();
 				if (line == null) {
-					Thread.sleep(2000);
 					continue;
 				}
 				System.out.println(line);
 				Main.queue.add(line);
 			}
-			new Sender().run();
+			new MessageOrganizer().run();
 			int exitCode = p.exitValue();
 			System.out.println("Tracker exited. ExitCode: " + exitCode);
 			System.exit(1);
-			//System.out.println("Tracker restart...");
-			//new Tracker(command).start();
 		} catch (Exception e) {
 			System.out.println("Tracking failed: " + e.getMessage());
 			e.printStackTrace();

@@ -1,22 +1,21 @@
 # SystemdLogTracker
 
-[日本語のREADMEはこちらから](https://github.com/book000/SystemdLogTracker/blob/master/README-ja.md)
+[日本語の README はこちらから](https://github.com/book000/SystemdLogTracker/blob/master/README-ja.md)
 
 Tracking systemd log (journal) and send them to discord.
 
 ## Feature
 
-- Choose sending by Discord Bot OR sending by webhook in the config file.
+- Choose sending by Discord Bot, sending by discord webhook or slack incoming webhook in the config file.
 - All journalctl command arguments can be set.
-- When sending via webhook, the sender name can be changed in the config file.
-- When sending via webhook, the avatar url you can be changed in the config file.
 
 ## Requirements
 
-- Java 1.8+
-- Valid Discord Bot or Webhook URL
-- Eclipse (When installing from source)
-- Maven (When installing from source)
+- Java 16+
+- One of the following
+  - Valid Discord Bot Token and Discord Channel ID
+  - Valid Discord Webhook URL
+  - Valid Slack Incoming Message Webhook URL
 
 ## Install
 
@@ -29,17 +28,6 @@ Tracking systemd log (journal) and send them to discord.
 5. Please start again after editing.
 6. (if necessary) Let's register with Systemd etc. Check `Register with Systemd` below.
 
-### from source with Eclipse
-
-1. `File` -> `Import` -> `Git` -> `Projects from Git` -> `Clone URI`
-2. Enter the `https://github.com/book000/SystemdLogTracker.git` in the URI field. -> `Next`
-3. Select `master` branch. -> `Next`
-4. (if necessary) Set `Destination directory`. -> `Next`
-5. Select `Import existing Eclipse projects`. -> `Next`
-6. Select `SystemdLogTracker` project. -> `Finish`
-7. Right click on the project name. -> `Run as` -> `Maven install`
-8. `SystemdLogTracker-jar-with-dependencies.jar` is created in the `target` directory.
-
 ### Run
 
 Run the following command:
@@ -48,70 +36,99 @@ Run the following command:
 java -jar SystemdLogTracker.jar [Config file path]
 ```
 
-`[Config file path]` can specify the path of the config file. For example: `java -jar SystemdLogTracker.jar Tester.properties`  
-If not specified, `conf.properties` is used.
+`[Config file path]` can specify the path of the config file. For example: `java -jar SystemdLogTracker.jar Tester.json`  
+If not specified, `config.json` is used.
 
 ## Configuration
 
-The default config file is `conf.properties`. But, the config file path can be changed by the argument when executing jar.
+The default config file is `config.json`. But, the config file path can be changed by the argument when executing jar.
+
+```json
+{
+  "discordWebhookUrl": "https://discord.com/api/webhooks/00000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "arguments": "-a -o cat -f -n 0 -u sshd"
+}
+```
+
+Be sure to set `discordToken` and `discordChannelId`, `discordWebhookUrl`, or `slackWebhookUrl`.
 
 ### discordToken
 
 Required when using **Discord Bot**.
 
-Please specify a token for Discord Bot.  
-For example: `discordToken=***********************************************************`
+Please specify a token for Discord Bot.
 
-### channelId
+```json
+{
+  "discordToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+```
+
+### discordChannelId
 
 Required when using **Discord Bot**.
 
-Please specify the destination channel ID.  
-For example: `channelId=620226160168796210`
+Please specify the destination channel ID.
 
-### webhookUrl
+```json
+{
+  "discordChannelId": "00000000000000"
+}
+```
 
-Required when using **Webhook**.
+### discordWebhookUrl
 
-Please specify the URL of the Webhook.  
-For example: `webhookUrl=https://discordapp.com/api/webhooks/**********`
+Required when using **Discord Webhook**.
 
-### webhookBotName
+Please specify the URL of the Discord Webhook.
 
-Required when using **Webhook**.
+```json
+{
+  "discordWebhookUrl": "https://discord.com/api/webhooks/00000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+```
 
-Please specify your webhook username.  
-For example: `webhookBotName=Systemd`  
-Default value: `SystemdLogTracker`
+### slackWebhookUrl
 
-### webhookAvatarUrl
+Required when using **Slack Incoming Webhook**.
 
-**Not** required.
+Please specify the URL of the Slack Webhook.
 
-Please specify your webhook avatar url.  
-For example: `webhookAvatarUrl=https://i.imgur.com/MDJlL8Q.jpg`
+```json
+{
+  "slackWebhookUrl": "https://hooks.slack.com/services/xxxxxxxxxx/xxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+```
 
 ### arguments
 
-**Required**.
+It is an option, but it is recommended to set it.
 
 Please specify argument of journalctl.  
-For example: `arguments=-a -o cat -f -n 0`  
-Default value: `-a -o cat -f -n 0`
+Default value: `arguments=-a -o cat -f -n 0`
 
-Please be sure to specified the `-f` or `--follow` argument. If not specified, monitoring will fail.  
-It is recommended to specify `-a` or `--all`. This shows everything even when output is very long.  
-The argument `-u` or `--unit=UNIT|PATTERN` is very useful. This can specify a systemd service (unit).
+```json
+{
+  "arguments": "-a -o cat -f -n 0 -u sshd"
+}
+```
+
+- Please be sure to specified the `-f` or `--follow` argument. If not specified, monitoring will fail.  
+- It is recommended to specify `-a` or `--all`. This shows everything even when output is very long.  
+- The argument `-u` or `--unit=UNIT|PATTERN` is very useful. This can specify a systemd service (unit).
 
 ### sendInterval
 
 **Not** required.
 
 Please specify the interval milliseconds for processing the output.  
-For example: `1000`  
 Default value: `5000`
 
-If it cannot be parsed as a `long` value, it is the default value is used.
+```json
+{
+  "sendInterval": 5000
+}
+```
 
 ## Register with Systemd
 
@@ -129,10 +146,11 @@ If it cannot be parsed as a `long` value, it is the default value is used.
    Restart=always
 
    [Install]
-   WantedBy = multi-user.target
+   WantedBy=multi-user.target
    ```
 
-   (For `<Command>` specify `/usr/bin/java -jar /var/SystemdLogTracker/SystemdLogTracker.jar /var/SystemdLogTracker/Tester.properties` etc.)
+   (For `<Command>` specify `/usr/bin/java -jar /var/SystemdLogTracker/SystemdLogTracker.jar /var/SystemdLogTracker/Tester.json` etc.)
+
 3. After executing `systemctl daemon-reload`, start the service with `systemctl start <ServiceName>`. `<ServiceName>` is `SystemdLogTracker` if service file is `SystemdLogTracker.service`.
 
 ## License
