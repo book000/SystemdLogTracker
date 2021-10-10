@@ -2,43 +2,31 @@
 
 [Click here for English README](https://github.com/book000/SystemdLogTracker/blob/master/README.md)
 
-systemdログ(journal)をトラッキングし、Discordに送信します。
+systemd ログ(journal)をトラッキングし、Discord に送信します。
 
 ## 特徴
 
-- コンフィグファイルによって、Discord Botによるチャンネルへの送信とWebhookによる送信を選ぶことができます。
-- journalctlコマンドの引数を全て設定できます。
-- webhookによる送信の場合、送信者名を設定で変更できます。
-- webhookによる送信の場合、アバターURLを設定で変更できます。
+- コンフィグファイルによって、Discord Bot によるチャンネルへの送信と Discord Webhook による送信、Slack Webhook による送信を選ぶことができます。
+- journalctl コマンドの引数を全て設定できます。
 
 ## 前提条件
 
-- Java 1.8+
-- 有効なDiscord BotまたはWebhook URL
-- Eclipse (ソースからインストールする際のみ)
-- Maven (ソースからインストールする際のみ)
+- Java 16+
+- 以下のいずれか
+  - 有効な Discord Bot Token と Discord Channel ID
+  - 有効な Discord Webhook URL
+  - 有効な Slack Incoming Message Webhook URL
 
 ## インストール
 
-### Releaseから
+### Release から
 
 1. [Release](https://github.com/book000/SystemdLogTracker/releases)ページを開いてください。
 2. 最新のバージョンかそれより古いバージョンのいずれかをダウンロードしてください。
-3. まずはじめに、`java -jar SystemdLogTracker.jar`などを使用して起動します。
-4. コンフィグファイルが生成されます。下部の`設定`を確認して編集してください。
+3. まずはじめに、`java -jar SystemdLogTracker.jar` などを使用して起動します。
+4. コンフィグファイルが生成されます。下部の `設定` を確認して編集してください。
 5. 編集したら、再度起動してください。
-6. (必要に応じて) Systemdなどに登録しましょう。下部の`Systemdに登録する`を確認してください。
-
-### Eclipseを使用してソースから
-
-1. `ファイル` -> `インポート` -> `Git` -> `Git からプロジェクト` -> `クローン URI`
-2. URI欄に`https://github.com/book000/SystemdLogTracker.git`を入力し、`次へ`をクリックしてください。
-3. `master`ブランチを選択し、`次へ`をクリックしてください。
-4. `宛先`の`ディレクトリー`を必要に応じて編集し、`次へ`をクリックしてください。
-5. `既存プロジェクトのインポート`を選択し、`次へ`をクリックしてください。
-6. `SystemdLogTracker`プロジェクトを選択し、`完了`をクリックしてください。
-7. プロジェクト名を右クリックし、`実行`から`Maven install`をクリックしてください。
-8. `target`ディレクトリに`SystemdLogTracker-jar-with-dependencies.jar`が作成されます。
+6. (必要に応じて) Systemd などに登録しましょう。下部の `Systemdに登録する` を確認してください。
 
 ### 実行
 
@@ -48,74 +36,103 @@ systemdログ(journal)をトラッキングし、Discordに送信します。
 java -jar SystemdLogTracker.jar [Config file path]
 ```
 
-`[Config file path]`には、コンフィグファイルのパスを指定できます。例: `java -jar SystemdLogTracker.jar Tester.properties`  
-指定しない場合、`conf.properties`が使用されます。
+`[Config file path]` には、コンフィグファイルのパスを指定できます。例: `java -jar SystemdLogTracker.jar Tester.json`  
+指定しない場合、カレントディレクトリの `config.json` が使用されます。
 
 ## 設定
 
-デフォルトのコンフィグファイルは`conf.properties`です。ただし、コンフィグファイルのパスはjarの実行時に引数によって変更できます。
+デフォルトのコンフィグファイルは `config.json` です。ただし、コンフィグファイルのパスは jar の実行時に引数によって変更できます。
+
+```json
+{
+  "discordWebhookUrl": "https://discord.com/api/webhooks/00000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "arguments": "-a -o cat -f -n 0 -u sshd"
+}
+```
+
+`discordToken` と `discordChannelId`、`discordWebhookUrl`、`slackWebhookUrl` のいずれかは必ず設定してください。
 
 ### discordToken
 
-**Discord Bot**を使用する場合に必要です。
+**Discord Bot** を使用する場合に必要です。
 
-Discord Botのトークンを指定してください。  
-例: `discordToken=***********************************************************`
+Discord Bot のトークンを指定してください。
 
-### channelId
+```json
+{
+  "discordToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+```
 
-**Discord Bot**を使用する場合に必要です。
+### discordChannelId
 
-送信先のChannelIDを指定してください。  
-例: `channelId=620226160168796210`
+**Discord Bot** を使用する場合に必要です。
 
-### webhookUrl
+送信先チャンネルの ID を指定してください。
 
-**Webhook**を使用する場合に必要です。
+```json
+{
+  "discordChannelId": "00000000000000"
+}
+```
 
-WebhookのURLを指定してください。  
-例: `webhookUrl=https://discordapp.com/api/webhooks/**********`
+### discordWebhookUrl
 
-### webhookBotName
+**Discord Webhook** を使用する場合に必要です。
 
-**Webhook**を使用する場合に必要です。
+Discord Webhook の URL を指定してください。
 
-Webhookのユーザーネームを指定してください。  
-例: `webhookBotName=Systemd`  
-デフォルト値: `SystemdLogTracker`
+```json
+{
+  "discordWebhookUrl": "https://discord.com/api/webhooks/00000000000000/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+```
 
-### webhookAvatarUrl
+### slackWebhookUrl
 
-必須では**ありません**。
+**Slack Incoming Webhook** を使用する場合に必要です。
 
-WebhookのアバターURLを指定してください。  
-例: `webhookAvatarUrl=https://i.imgur.com/MDJlL8Q.jpg`
+Slack Incoming Webhook の URL を指定してください。
+
+```json
+{
+  "slackWebhookUrl": "https://hooks.slack.com/services/xxxxxxxxxx/xxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+}
+```
 
 ### arguments
 
-**必須です**。
+オプションですが、設定することをお勧めします。
 
-journalctlの引数を指定してください。  
-例: `arguments=-a -o cat -f -n 0`  
-デフォルト値: `-a -o cat -f -n 0`
+journalctl の引数を指定してください。  
+デフォルト値は `-a -o cat -f -n 0` です。
 
-必ず`-f`または`--follow`引数を指定してください。指定しない場合、監視は失敗します。  
-`-a`または`--all`を指定することをお勧めします。これは出力が非常に長い場合でもすべてを表示します。  
-引数`-u`または`--unit=UNIT|PATTERN`はとても有用です。これにより、systemdサービス(Unit)を指定できます。
+```json
+{
+  "arguments": "-a -o cat -f -n 0 -u sshd"
+}
+```
+
+- 必ず `-f` または `--follow` 引数を指定してください。指定しない場合、監視は失敗します。
+- `-a` または `--all` を指定することをお勧めします。これは出力が非常に長い場合でもすべてを表示します。
+- 引数 `-u` または `--unit=UNIT|PATTERN` はとても有用です。これにより、systemd サービス(Unit)を指定できます。
 
 ### sendInterval
 
 必須では**ありません**。
 
-出力を処理するインターバルミリ秒を指定してください。  
-例: `1000`  
-デフォルト値: `5000`
+出力を処理する間隔をミリ秒で指定してください。  
+デフォルト値は `5000` です。
 
-`long`値として解析できない場合は、デフォルト値が使用されます。
+```json
+{
+  "sendInterval": 5000
+}
+```
 
-## Systemdに登録する
+## Systemd に登録する
 
-1. `/etc/systemd/system/`の下にサービスファイルを作成します。例: `/etc/systemd/system/SystemdLogTracker.service`
+1. `/etc/systemd/system/` の下にサービスファイルを作成します。例: `/etc/systemd/system/SystemdLogTracker.service`
 2. お好きなエディターでファイルを開き、次のように記述してください。
 
    ```ini
@@ -129,13 +146,14 @@ journalctlの引数を指定してください。
    Restart=always
 
    [Install]
-   WantedBy = multi-user.target
+   WantedBy=multi-user.target
    ```
 
-   (`<Command>`には`/usr/bin/java -jar /var/SystemdLogTracker/SystemdLogTracker.jar /var/SystemdLogTracker/Tester.properties`などを指定してください。)
-3. `systemctl daemon-reload`を実行した後、`systemctl start <ServiceName>`でサービスを開始します。サービスファイルが`SystemdLogTracker`の場合、`<ServiceName>`は`SystemdLogTracker.service`です。
+   (`<Command>`には`/usr/bin/java -jar /var/SystemdLogTracker/SystemdLogTracker.jar /var/SystemdLogTracker/Tester.config`などを指定してください。)
+
+3. `systemctl daemon-reload` を実行した後、 `systemctl start <ServiceName>` でサービスを開始します。サービスファイルが `SystemdLogTracker` の場合、`<ServiceName>` は `SystemdLogTracker.service` です。
 
 ## ライセンス
 
-このプロジェクトのライセンスはMITライセンスです。
+このプロジェクトのライセンスは MIT ライセンスです。
 [LICENSE](https://github.com/book000/SystemdLogTracker/blob/master/LICENSE)
