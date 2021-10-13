@@ -20,7 +20,7 @@ public class Config {
     public Config(Path path) {
         this.path = path;
         boolean bool = load();
-        if(!bool){
+        if (!bool) {
             System.exit(1);
         }
     }

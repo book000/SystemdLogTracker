@@ -15,24 +15,24 @@ public class MessageOrganizer extends TimerTask {
                 if (messages.size() > 0 && (String.join("\n", messages).length() + line.length()) >= 1900) {
                     Main.SendMessage(String.join("\n", messages));
                     messages.clear();
-				}
-				if (line.length() >= 1900) {
-					if (messages.size() > 0) {
+                }
+                if (line.length() >= 1900) {
+                    if (messages.size() > 0) {
                         Main.SendMessage(String.join("\n", messages));
                         messages.clear();
-					}
-					int count = line.length() / 1900;
-					for (int i = 0; i <= count; i++) {
-						int end = Math.min((i + 1) * 1900, line.length());
-						String text = line.substring(i * 1900, end);
+                    }
+                    int count = line.length() / 1900;
+                    for (int i = 0; i <= count; i++) {
+                        int end = Math.min((i + 1) * 1900, line.length());
+                        String text = line.substring(i * 1900, end);
                         Main.SendMessage(text);
-					}
-				}
-				messages.add(line);
-			}
-			if (messages.size() > 0) {
+                    }
+                }
+                messages.add(line);
+            }
+            if (messages.size() > 0) {
                 Main.SendMessage(String.join("\n", messages));
-			}
-		}
-	}
+            }
+        }
+    }
 }

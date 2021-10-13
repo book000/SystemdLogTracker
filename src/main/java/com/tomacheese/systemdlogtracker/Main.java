@@ -19,21 +19,21 @@ public class Main {
         List<String> command = new LinkedList<>();
         command.add("journalctl");
         command.addAll(List.of(config.getJournalArguments().split(" ")));
-		System.out.println("[INFO] Run command: " + String.join(" ", command));
+        System.out.println("[INFO] Run command: " + String.join(" ", command));
 
-		new Tracker(command).start();
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new MessageOrganizer(), 0, config.getSendInterval());
+        new Tracker(command).start();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new MessageOrganizer(), 0, config.getSendInterval());
         CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(new Sender());
-	}
+    }
 
-	public static void SendMessage(String text) {
-		if (text.length() >= 2000) {
-			System.out.println("[ERROR] line message too long: " + text.length() + "\n" + text);
+    public static void SendMessage(String text) {
+        if (text.length() >= 2000) {
+            System.out.println("[ERROR] line message too long: " + text.length() + "\n" + text);
             return;
-		}
+        }
         messages.add(text);
-	}
+    }
 
     public static Config getConfig() {
         return config;
