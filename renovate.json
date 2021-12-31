@@ -6,9 +6,6 @@
     ":prHourlyLimit2"
   ],
   "timezone": "Asia/Tokyo",
-  "schedule": [
-    "at 9:00am on friday"
-  ],
   "dependencyDashboard": false,
   "automerge": true,
   "branchConcurrentLimit": 0
