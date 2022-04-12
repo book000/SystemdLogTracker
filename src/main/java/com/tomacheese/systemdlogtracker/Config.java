@@ -1,5 +1,6 @@
 package com.tomacheese.systemdlogtracker;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +16,7 @@ public class Config {
     private String discordWebhookUrl;
     private String slackWebhookUrl;
     private String arguments = "-a -o cat -f -n 0";
+    private String[] filteredWords = new String[0];
     private long sendInterval = 5000;
 
     public Config(Path path) {
@@ -23,6 +25,17 @@ public class Config {
         if (!bool) {
             System.exit(1);
         }
+    }
+
+    public static String[] toStringArray(JSONArray array) {
+        if(array==null)
+            return null;
+    
+        String[] arr=new String[array.length()];
+        for(int i=0; i<arr.length; i++) {
+            arr[i]=array.optString(i);
+        }
+        return arr;
     }
 
     public boolean load() {
@@ -56,6 +69,7 @@ public class Config {
             }
 
             arguments = object.has("arguments") ? object.getString("arguments") : arguments;
+            filteredWords = object.has("filteredWords") ? toStringArray(object.getJSONArray("filteredWords")) : filteredWords;
             sendInterval = object.has("sendInterval") ? object.getLong("sendInterval") : sendInterval;
         } catch (JSONException e) {
             System.out.println("[ERROR] The setting information could not be read normally.");
@@ -86,6 +100,10 @@ public class Config {
 
     public String getJournalArguments() {
         return arguments;
+    }
+
+    public String[] getFilteredWords() {
+        return filteredWords;
     }
 
     public long getSendInterval() {

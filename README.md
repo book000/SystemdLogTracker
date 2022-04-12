@@ -130,6 +130,19 @@ Default value: `5000`
 }
 ```
 
+### filteredWords
+
+**Not** required.
+
+All messages are checked to see if they contain any of these strings. If there is a match, the message is discarded.
+Default value: `empty`
+
+```json
+{
+  "filteredWords": ["sshd", "[UFW ALLOW]"]
+}
+```
+
 ## Register with Systemd
 
 1. Create a service file under `/etc/systemd/system/`. For example: `/etc/systemd/system/SystemdLogTracker.service`
