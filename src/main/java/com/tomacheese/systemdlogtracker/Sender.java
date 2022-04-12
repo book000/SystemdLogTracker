@@ -34,7 +34,7 @@ public class Sender implements Runnable {
         String url = "https://discord.com/api/channels/%s/messages".formatted(Main.getConfig().getDiscordChannelId());
         JSONObject object = new JSONObject();
         object.put("content", content);
-        RequestBody requestBody = RequestBody.create(MediaType.get("application/json"), object.toString());
+        RequestBody requestBody = RequestBody.create(object.toString(), MediaType.get("application/json"));
         Request request = new Request.Builder()
             .url(url)
             .header("Authorization", "Bot " + Main.getConfig().getDiscordToken())
@@ -74,7 +74,7 @@ public class Sender implements Runnable {
         String url = Main.getConfig().getDiscordWebhookUrl();
         JSONObject object = new JSONObject();
         object.put("content", content);
-        RequestBody requestBody = RequestBody.create(MediaType.get("application/json"), object.toString());
+        RequestBody requestBody = RequestBody.create(object.toString(), MediaType.get("application/json"));
         Request request = new Request.Builder()
             .url(url)
             .post(requestBody)
@@ -113,7 +113,7 @@ public class Sender implements Runnable {
         String url = Main.getConfig().getSlackWebhookUrl();
         JSONObject object = new JSONObject();
         object.put("text", content);
-        RequestBody requestBody = RequestBody.create(MediaType.get("application/json"), object.toString());
+        RequestBody requestBody = RequestBody.create(object.toString(), MediaType.get("application/json"));
         Request request = new Request.Builder()
             .url(url)
             .post(requestBody)
