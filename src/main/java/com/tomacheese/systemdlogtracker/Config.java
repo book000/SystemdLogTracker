@@ -27,17 +27,6 @@ public class Config {
         }
     }
 
-    public static String[] toStringArray(JSONArray array) {
-        if(array==null)
-            return null;
-    
-        String[] arr=new String[array.length()];
-        for(int i=0; i<arr.length; i++) {
-            arr[i]=array.optString(i);
-        }
-        return arr;
-    }
-
     public boolean load() {
         JSONObject object;
         try {
@@ -76,6 +65,17 @@ public class Config {
             return false;
         }
         return true;
+    }
+
+    public static String[] toStringArray(JSONArray array) {
+        if (array == null)
+            return null;
+
+        String[] arr = new String[array.length()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = array.optString(i);
+        }
+        return arr;
     }
 
     public SendMode getSendMode() {
