@@ -27,9 +27,18 @@ public class Main {
         CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(new Sender());
     }
 
+    public static boolean containsItemFromArray(String inputString, String[] items) {
+        return Arrays.stream(items).anyMatch(inputString::contains);
+    }
+
     public static void SendMessage(String text) {
         if (text.length() >= 2000) {
             System.out.println("[ERROR] line message too long: " + text.length() + "\n" + text);
+            return;
+        }
+        
+        if (containsItemFromArray(text, config.getFilteredWords())) {
+            System.out.println("Message matched filtered word, ignoring");
             return;
         }
         messages.add(text);

@@ -20,12 +20,16 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 16
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+
     - name: Set SHORT_SHA
       id: vars
       run: echo "::set-output name=SHORT_SHA::$(git rev-parse --short HEAD)"
+
     - name: Create a Release
+      if: github.event_name == 'push' || github.ref == 'refs/heads/master'
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -35,7 +39,9 @@ jobs:
         release_name: Release ${{ steps.vars.outputs.SHORT_SHA }}
         draft: true
         prerelease: false
+
     - name: Upload Release Asset
+      if: github.event_name == 'push' || github.ref == 'refs/heads/master'
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
