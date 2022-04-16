@@ -1,0 +1,21 @@
+# 自動的にbook000をレビュアーにする
+# book000, renovate, github-actionsからのPull-Requestにはレビュアーを追加しない
+
+name: Add reviewer
+
+on:
+  pull_request_target:
+    types: [ opened ]
+
+jobs:
+  add-reviewer:
+    runs-on: ubuntu-latest
+    if: github.event.sender.id != 8929706 || github.event.sender.id != 29139614 || github.event.sender.id != 41898282
+    # 8929706 = book000, 29139614 = renovate, 41898282 = github-actions
+
+    steps:
+      - name: Add reviewer
+        run:
+          gh pr edit ${{ github.event.number }} -R "$GITHUB_REPOSITORY" --add-reviewer book000
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
