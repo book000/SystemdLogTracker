@@ -1,0 +1,33 @@
+# Maven でビルドを実行する。マージされたら、リリースを作成する。
+
+name: Maven
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    types:
+      - opened
+      - synchronize
+    paths:
+      - .github/workflows/maven-ci.yml
+  pull_request_target:
+    branches:
+      - main
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.merged == true && github.base_ref || github.event.pull_request.head.sha }}
+
+jobs:
+  maven-ci:
+    name: Maven CI
+    uses: book000/templates/.github/workflows/reusable-maven.yml@master
+    with:
+      java-version: 16
