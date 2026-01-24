@@ -1,8 +1,7 @@
 # GitHub Copilot Instructions
 
 ## プロジェクト概要
-- 目的: [日本語の README はこちらから](https://github.com/book000/SystemdLogTracker/blob/master/README-ja.md)
-- 主な機能: Choose sending by Discord Bot, sending by discord webhook or slack incoming webhook in the config file. / All journalctl command arguments can be set.
+Monitors systemd journal logs and sends them to Discord (bot/webhook) or Slack for real-time notifications of system events.
 
 ## 共通ルール
 - 会話は日本語で行う。
@@ -12,8 +11,8 @@
 - 既存のプロジェクトルールがある場合はそれを優先する。
 
 ## 技術スタック
-- 言語: Unknown
-- パッケージマネージャー: pnpm 優先（ロックファイルに従う）。
+- 言語: Java
+- パッケージマネージャー: Maven
 
 ## コーディング規約
 - フォーマット: 既存設定（ESLint / Prettier / formatter）に従う。
@@ -24,9 +23,20 @@
 - TypeScript 使用時は strict 前提とし、`skipLibCheck` で回避しない。
 - 関数やインターフェースには docstring（JSDoc など）を記載する。
 
-## 開発コマンド
+### 開発コマンド
 ```bash
-# README を確認してください
+# install
+Download JAR from Releases page
+
+# dev
+mvn clean package
+
+# build
+mvn clean assembly:single
+
+# run
+java -jar SystemdLogTracker.jar [config-file.json]
+
 ```
 
 ## テスト方針
@@ -37,5 +47,34 @@
 - ログに機密情報を出力しない。
 
 ## ドキュメント更新
+- 実装確定後、同一コミットまたは追加コミットで更新する。
+- README、API ドキュメント、コメント等は常に最新状態を保つ。
 
 ## リポジトリ固有
+- **type**: Java CLI Utility / System Monitor
+**platforms:**
+  - Linux
+  - macOS
+  - Windows
+- **main_class**: com.tomacheese.systemdlogtracker.Main
+- **config_format**: JSON
+- **default_config_file**: config.json
+**output_targets:**
+  - Discord Bot
+  - Discord Webhook
+  - Slack Incoming Webhook
+- **commands_supported**: All journalctl arguments (recommended: -a -o cat -f -n 0)
+**features:**
+  - Real-time systemd journal tracking
+  - Configurable filtering (filteredWords)
+  - Customizable send intervals
+  - Multiple output targets
+- **registration**: Supports systemd service registration for auto-start
+**json_config_keys:**
+  - discordToken
+  - discordChannelId
+  - discordWebhookUrl
+  - slackWebhookUrl
+  - arguments
+  - sendInterval
+  - filteredWords

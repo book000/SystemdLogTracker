@@ -25,3 +25,30 @@
 - ログに機密情報を出力しない。
 
 ## リポジトリ固有
+- **type**: Java CLI Utility / System Monitor
+**platforms:**
+  - Linux
+  - macOS
+  - Windows
+- **main_class**: com.tomacheese.systemdlogtracker.Main
+- **config_format**: JSON
+- **default_config_file**: config.json
+**output_targets:**
+  - Discord Bot
+  - Discord Webhook
+  - Slack Incoming Webhook
+- **commands_supported**: All journalctl arguments (recommended: -a -o cat -f -n 0)
+**features:**
+  - Real-time systemd journal tracking
+  - Configurable filtering (filteredWords)
+  - Customizable send intervals
+  - Multiple output targets
+- **registration**: Supports systemd service registration for auto-start
+**json_config_keys:**
+  - discordToken
+  - discordChannelId
+  - discordWebhookUrl
+  - slackWebhookUrl
+  - arguments
+  - sendInterval
+  - filteredWords
