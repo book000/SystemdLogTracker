@@ -19,7 +19,7 @@ Gemini CLI 向けのコンテキストと作業方針を定義する。
 
 ## コーディング規約
 - フォーマット: 既存の Java コードのインデント（4スペース）とスタイルに従う。
-- 命名規則: CamelCase (variables/methods), PascalCase (classes).
+- 命名規則: camelCase (variables/methods), PascalCase (classes).
 - コメント言語: 日本語
 - エラーメッセージ言語: 英語
 
