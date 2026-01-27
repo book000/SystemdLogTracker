@@ -16,7 +16,7 @@ Claude Code の作業方針とプロジェクト固有ルールを示す。
 
 ## 重要ルール
 - 会話言語: 日本語
-- コミット規約: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- コミット規約: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)（`<description>` は日本語で記載する）
 - コメント言語: 日本語
 - エラーメッセージ言語: 英語
 
