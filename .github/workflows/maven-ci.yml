@@ -77,6 +77,6 @@ jobs:
     name: Maven CI
     needs: approval-gate
     if: always() && needs.approval-gate.result == 'success' && (github.event.action != 'closed' || github.event.pull_request.merged == true)
-    uses: book000/templates/.github/workflows/reusable-maven.yml@0a5ddc8f0cefde1a7fd8b1d49d62d42620eb753e # master
+    uses: book000/templates/.github/workflows/reusable-maven.yml@a3e0d9feb5b5ee50ac59e71b708a6563b16add7a # master
     with:
       java-version: 16
