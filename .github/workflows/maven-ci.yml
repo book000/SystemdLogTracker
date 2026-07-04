@@ -77,6 +77,10 @@ jobs:
     name: Maven CI
     needs: approval-gate
     if: always() && needs.approval-gate.result == 'success' && (github.event.action != 'closed' || github.event.pull_request.merged == true)
-    uses: book000/templates/.github/workflows/reusable-maven.yml@f61066bfac67a45a325ea728191497763566dd23 # master
+    uses: book000/templates/.github/workflows/reusable-maven.yml@master
     with:
       java-version: 16
+      # デフォルトでは head SHA をチェックアウトできない。フォーク PR は上の approval-gate で
+      # Environment（fork-pr-build）の手動承認を既に必須にしているため、承認済みの場合に限り
+      # チェックアウトを許可する。
+      allow-unsafe-pr-checkout: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository }}
