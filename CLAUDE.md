@@ -20,7 +20,7 @@ mvn package   # 依存を含む実行可能 JAR を target/ に生成 (SystemdLo
 mvn clean     # ビルド成果物のクリーン
 ```
 
-実行: `java -jar <JAR> [設定ファイルパス]` (設定ファイル省略時は `config.json` を使用)。リリース配布物は `SystemdLogTracker.jar` にリネームされている (README 参照)。
+実行: `java -jar <JAR> [設定ファイルパス]` (設定ファイル省略時は `config.json` を使用)。README の実行例では配布物名の `SystemdLogTracker.jar` を使用している。
 
 ## アーキテクチャと主要ファイル
 
