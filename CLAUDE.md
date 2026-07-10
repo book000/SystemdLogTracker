@@ -1,93 +1,60 @@
-# Claude Code 用作業方針
-
-## 目的
-Claude Code の作業方針とプロジェクト固有ルールを示す。
-
-## 判断記録のルール
-- 判断内容の要約
-- 検討した代替案
-- 採用しなかった案とその理由
-- 前提条件・仮定・不確実性
-- 他エージェントによるレビュー可否
+# CLAUDE.md
 
 ## プロジェクト概要
-- 目的: systemd ログ（journal）を追跡し、Discord または Slack に送信する。
-- 主な機能: journalctl によるログ監視、Discord Bot/Webhook および Slack Webhook への通知。
 
-## 重要ルール
-- 会話言語: 日本語
-- コミット規約: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)（`<description>` は日本語で記載する）
-- コメント言語: 日本語
-- エラーメッセージ言語: 英語
+- 目的: systemd のログ (journal) を追跡し、Discord (Bot または Webhook) もしくは Slack (Incoming Webhook) に送信する。
+- 主な機能: `journalctl` によるログ監視、複数プラットフォームへの通知送信、`filteredWords` によるフィルタリング。
+- 対象環境: `journalctl` が利用可能な Linux 環境。
 
-## 環境のルール
-- ブランチ命名: [Conventional Branch](https://conventional-branch.github.io)（短縮形を使用、例: feat/add-feature）
-- GitHub リポジトリ調査方法: 必要に応じてテンポラリディレクトリに clone して検索する。
-- Renovate PR の扱い: 自動生成された PR には直接触れない。
+## 技術スタック
 
-## コード改修時のルール
-- 日本語と英数字の間には半角スペースを挿入する。
-- エラーメッセージの絵文字統一: 既存の形式がある場合はそれに従う。
-- docstring 記載: JavaDoc を日本語で記載する。
-
-## 相談ルール
-- Codex CLI: 実装レビュー、局所設計、整合性確認。
-- Gemini CLI: 外部仕様、最新情報確認。
-- 指摘への対応ルール: 信頼度スコアが高い指摘には必ず対応する。
+- 言語: Java 16+ (pom.xml の `java.version` は 16)
+- ビルドツール: Maven (`maven-assembly-plugin` で依存を含む実行可能 JAR を生成)
+- 主要ライブラリ: OkHttp 4.12.0 (`com.squareup.okhttp3`)、org.json (`org.json:json`)
 
 ## 開発コマンド
+
 ```bash
-# 依存関係のインストール・コンパイル
-mvn compile
-
-# ビルド
-mvn package
-
-# クリーン
-mvn clean
+mvn compile   # 依存関係の解決・コンパイル
+mvn package   # 実行可能 JAR (SystemdLogTracker.jar) を作成
+mvn clean     # ビルド成果物のクリーン
 ```
 
-## アーキテクチャと主要ファイル
-- `src/main/java/com/tomacheese/systemdlogtracker/`
-    - `Main.java`: エントリーポイント、設定の読み込み。
-    - `Config.java`: 設定ファイルのパースと保持。
-    - `Tracker.java`: `journalctl` コマンドの実行と出力監視。
-    - `MessageOrganizer.java`: メッセージのフォーマット。
-    - `Sender.java`: 各プラットフォームへの送信処理。
+実行: `java -jar SystemdLogTracker.jar [設定ファイルパス]` (省略時は `config.json`)。
 
-## 実装パターン
-- 推奨パターン: 標準的な Maven プロジェクトの構造に従う。
-- 非推奨パターン: 機密情報のハードコード。
+## アーキテクチャと主要ファイル
+
+`src/main/java/com/tomacheese/systemdlogtracker/`
+
+- `Main.java`: エントリーポイント。設定の読み込みと各コンポーネントの起動。
+- `Config.java`: 設定ファイル (JSON) のパースと保持。
+- `Tracker.java`: `journalctl` コマンドの実行と出力監視。
+- `MessageOrganizer.java`: メッセージのフォーマット。
+- `Sender.java`: 各プラットフォーム (Discord Bot/Webhook、Slack Webhook) への送信処理。
+
+## コーディング規約
+
+- 日本語と英数字の間には半角スペースを挿入する。
+- インデントは 4 スペース。既存の Java コードのスタイルに従う。
+- 命名: 変数・メソッドは camelCase、クラスは PascalCase。
+- JavaDoc は日本語で記載する。
+- コメント言語は日本語、エラーメッセージ言語は英語。
+- 非推奨: 認証情報 (Token, Webhook URL 等) のハードコード。
+
+## コミット規約
+
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従う。`<description>` は日本語で記載する。
 
 ## テスト
-- テスト方針: 現状は手動確認がメイン。必要に応じて JUnit によるテストを追加。
 
-## ドキュメント更新ルール
-- 更新対象: `README.md`, `README-ja.md`
-- 更新タイミング: 機能追加や設定項目の変更時。
+- 現状は手動確認 (JAR を実行し journal 監視・通知送信を確認) がメイン。
+- 自動テストを追加する場合は JUnit を検討する (`src/test/java/` が用意されている)。
 
-## 作業チェックリスト
+## ドキュメント更新
 
-### 新規改修時
-1. プロジェクトを理解する。
-2. 作業ブランチが適切であることを確認する。
-3. 最新のリモートブランチに基づいた新規ブランチであることを確認する。
-4. PR がクローズされた不要ブランチが削除済みであることを確認する。
+- 機能追加や設定項目の変更時は `README.md` と `README-ja.md` の両方を更新する。
 
-### コミット・プッシュ前
-1. Conventional Commits に従っていることを確認する。
-2. センシティブな情報が含まれていないことを確認する。
-3. 動作確認を行う。
+## セキュリティ / 機密情報
 
-### PR 作成前
-1. PR 作成の依頼があることを確認する。
-2. センシティブな情報が含まれていないことを確認する。
-3. コンフリクトの恐れがないことを確認する。
-
-### PR 作成後
-1. コンフリクトがないことを確認する。
-2. PR 本文が最新状態のみを網羅していることを確認する。
-3. `gh pr checks <PR ID> --watch` で CI を確認する。
-
-## リポジトリ固有
-- `journalctl` コマンドへの依存があるため、Linux 環境での動作を想定。
+- 認証情報 (Discord Token、Webhook URL など) をコードや設定サンプルにコミットしない。
+- ログに機密情報を出力しない。
