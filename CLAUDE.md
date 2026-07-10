@@ -16,11 +16,11 @@
 
 ```bash
 mvn compile   # 依存関係の解決・コンパイル
-mvn package   # 実行可能 JAR (SystemdLogTracker.jar) を作成
+mvn package   # 依存を含む実行可能 JAR を target/ に生成 (SystemdLogTracker-jar-with-dependencies.jar)
 mvn clean     # ビルド成果物のクリーン
 ```
 
-実行: `java -jar SystemdLogTracker.jar [設定ファイルパス]` (省略時は `config.json`)。
+実行: `java -jar <JAR> [設定ファイルパス]` (設定ファイル省略時は `config.json` を使用)。リリース配布物は `SystemdLogTracker.jar` にリネームされている (README 参照)。
 
 ## アーキテクチャと主要ファイル
 
