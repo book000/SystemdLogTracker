@@ -11,19 +11,53 @@ import java.util.concurrent.TimeUnit;
 public class Sender implements Runnable {
     @Override
     public void run() {
+        double after = sendNext();
+        CompletableFuture.delayedExecutor((long) (after * 1000), TimeUnit.MILLISECONDS).execute(this);
+    }
+
+    /**
+     * キューの先頭 1 件を送信する。送信に失敗したメッセージは先頭に戻し、次回の送信で再送する。
+     *
+     * @return 次の送信までの待ち秒数
+     */
+    double sendNext() {
         String line = Main.messages.poll();
         if (line == null) {
-            CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(this);
-            return;
+            return 1;
         }
-        double after = 1;
-        switch (Main.getConfig().getSendMode()) {
-            case DISCORD_BOT -> after = discordSendMessage("```" + line + "```");
-            case DISCORD_WEBHOOK -> after = discordWebhookSendMessage("```" + line + "```");
-            case SLACK_WEBHOOK -> after = slackWebhookSendMessage("```" + line + "```");
+        try {
+            double after = 1;
+            switch (Main.getConfig().getSendMode()) {
+                case DISCORD_BOT -> after = discordSendMessage("```" + line + "```");
+                case DISCORD_WEBHOOK -> after = discordWebhookSendMessage("```" + line + "```");
+                case SLACK_WEBHOOK -> after = slackWebhookSendMessage("```" + line + "```");
+            }
+            // 送信メソッドは成功時のみ 0 を返す。失敗時は順序を保つため先頭に戻す
+            if (after > 0) {
+                Main.messages.addFirst(line);
+            }
+            return after;
+        } catch (RuntimeException e) {
+            System.out.println("[ERROR] sendNext failed: " + e.getMessage());
+            Main.messages.addFirst(line);
+            return 1;
         }
+    }
 
-        CompletableFuture.delayedExecutor((long) (after * 1000), TimeUnit.MILLISECONDS).execute(this);
+    /**
+     * 429 の待ち時間ヘッダを秒数に変換する。
+     * 0 を返すと成功と区別できなくなるため、値が無い、数値でない、有限でない、0 以下の場合は 1 を返す。
+     */
+    static double retryDelay(String header) {
+        if (header == null) {
+            return 1;
+        }
+        try {
+            double value = Double.parseDouble(header);
+            return Double.isFinite(value) && value > 0 ? value : 1;
+        } catch (NumberFormatException e) {
+            return 1;
+        }
     }
 
     double discordSendMessage(String content) {
@@ -47,15 +81,7 @@ public class Sender implements Runnable {
                 }
                 if (response.code() == 429) {
                     // Rate limit
-                    String rateLimitResetAfterStr = response.header("X-RateLimit-Reset-After");
-                    if (rateLimitResetAfterStr == null) {
-                        return 1;
-                    }
-                    try {
-                        return Double.parseDouble(rateLimitResetAfterStr);
-                    } catch (NumberFormatException e) {
-                        return 1;
-                    }
+                    return retryDelay(response.header("X-RateLimit-Reset-After"));
                 } else {
                     System.out.println("[ERROR] discordSendMessage failed: " + response.code() + " " + Objects.requireNonNull(response.body()).string());
                 }
@@ -86,15 +112,7 @@ public class Sender implements Runnable {
                 }
                 if (response.code() == 429) {
                     // Rate limit
-                    String rateLimitResetAfterStr = response.header("X-RateLimit-Reset-After");
-                    if (rateLimitResetAfterStr == null) {
-                        return 1;
-                    }
-                    try {
-                        return Double.parseDouble(rateLimitResetAfterStr);
-                    } catch (NumberFormatException e) {
-                        return 1;
-                    }
+                    return retryDelay(response.header("X-RateLimit-Reset-After"));
                 } else {
                     System.out.println("[ERROR] discordWebhookSendMessage failed: " + response.code() + " " + Objects.requireNonNull(response.body()).string());
                 }
@@ -125,15 +143,7 @@ public class Sender implements Runnable {
                 }
                 if (response.code() == 429) {
                     // Rate limit
-                    String retryAfterStr = response.header("Retry-After");
-                    if (retryAfterStr == null) {
-                        return 1;
-                    }
-                    try {
-                        return Double.parseDouble(retryAfterStr);
-                    } catch (NumberFormatException e) {
-                        return 1;
-                    }
+                    return retryDelay(response.header("Retry-After"));
                 } else {
                     System.out.println("[ERROR] slackWebhookSendMessage failed: " + response.code() + " " + Objects.requireNonNull(response.body()).string());
                 }
