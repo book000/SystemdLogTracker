@@ -3,12 +3,13 @@ package com.tomacheese.systemdlogtracker;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static Config config;
     public static final Queue<String> queue = new ArrayDeque<>();
-    public static final Queue<String> messages = new ArrayDeque<>();
+    public static final Deque<String> messages = new ConcurrentLinkedDeque<>();
 
     public static void main(String[] args) {
         Path path = Path.of(args.length >= 1 ? String.join(" ", args) : "config.json");
@@ -46,5 +47,9 @@ public class Main {
 
     public static Config getConfig() {
         return config;
+    }
+
+    static void setConfig(Config config) {
+        Main.config = config;
     }
 }
