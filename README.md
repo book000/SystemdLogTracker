@@ -24,7 +24,7 @@ Tracking systemd log (journal) and send them to discord or slack.
 1. Go to [Release](https://github.com/book000/SystemdLogTracker/releases) page.
 2. Download latest version or any older version
 3. First start it using `java -jar SystemdLogTracker.jar` etc.
-4. A configuration file is generated. Check and edit the `Configuration` below.
+4. If the configuration file does not exist, a template is generated and the program exits with status 1 because a destination has not been configured. Add your Discord or Slack settings as described in `Configuration` below.
 5. Please start again after editing.
 6. (if necessary) Let's register with Systemd etc. Check `Register with Systemd` below.
 

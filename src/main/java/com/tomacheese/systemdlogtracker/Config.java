@@ -6,7 +6,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class Config {
     private final Path path;
@@ -31,6 +33,9 @@ public class Config {
         JSONObject object;
         try {
             object = new JSONObject(Files.readString(path));
+        } catch (NoSuchFileException e) {
+            generateDefaultConfig();
+            return false;
         } catch (IOException e) {
             System.out.println("[ERROR] Failed to read the configuration file.");
             return false;
@@ -65,6 +70,20 @@ public class Config {
             return false;
         }
         return true;
+    }
+
+    private void generateDefaultConfig() {
+        JSONObject object = new JSONObject();
+        object.put("arguments", arguments);
+        object.put("filteredWords", new JSONArray());
+        object.put("sendInterval", sendInterval);
+        try {
+            Files.writeString(path, object.toString(4) + System.lineSeparator(), StandardOpenOption.CREATE_NEW);
+            System.out.println("[INFO] Generated the configuration file: " + path);
+            System.out.println("[INFO] Add your Discord or Slack settings before restarting.");
+        } catch (IOException e) {
+            System.out.println("[ERROR] Failed to write the configuration file.");
+        }
     }
 
     public static String[] toStringArray(JSONArray array) {
